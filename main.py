@@ -80,14 +80,12 @@ def main():
                 print("Game over!")
                 sys.exit()
 
-        # Add another collision check to the game loop. Loop over each asteroid, and for each asteroid, loop over each shot. If a shot and an asteroid collide:
-        # Call log_event("asteroid_shot").
-        # Call the .kill() method on both objects (the shot and the asteroid) to remove them from the game.
+        # Add another collision check to the game loop. Loop over each asteroid, and for each asteroid, loop over each shot.
         for asteroid in asteroids:
             for shot in shots:
                 if asteroid.collides_with(shot):
                     log_event("asteroid_shot")
-                    asteroid.kill()
+                    asteroid.split()
                     shot.kill()
 
 if __name__ == "__main__":

@@ -1,4 +1,6 @@
-Setup and run the project
+# Asteroid Game Project
+
+## Setup
 
 On Windows, install uv from PowerShell if it is not already installed:
 
@@ -20,12 +22,12 @@ No manual activation is required when using `uv run`. In VS Code, the workspace 
 
 For Linux or macOS, install uv with `curl -LsSf https://astral.sh/uv/install.sh | sh`, then run the same `uv sync` and `uv run` commands from the project directory.
 
-Problem 1:
+## Problem 1:
 The triangle player moves as normal but leaves afterimages as it moves
 The asteroids can touch the afterimage in the center where the player is at the beginning to end the game, even if the player has moved elsewhere
 That is because the player hitbox won't move even if the player is moving.
 
-Solution 1:
+## Solution 1:
 The collision check was constructing a new player every frame, adding more player sprites at the starting position.
 It now checks collisions against the single player instance, so the hitbox follows the moving player and the extra trails should stop.
 Create new Player object
@@ -33,19 +35,13 @@ player = Player(x, y)
 Change collision check to use the Player object instead of creating a new one each time
 if asteroid.collides_with(player):
 
-Problem 2:
+## Problem 2:
 The weapon on the ship is overpowered as it spammed bullets
 
-Solution 2:
+## Solution 2:
 Implement a shoot cooldown to limit fire rate to one shot every 0.3 seconds
 
-In our game, bullets:
-Are small circles
-Move at a constant speed in a straight line
-Split up asteroids when they collide with them
-Are spawned by player input (spacebar) and move in the direction the player is facing
-
-Ideas:
+## Ideas:
 Add a scoring system
 Implement multiple lives and respawning
 Add an explosion effect for the asteroids
