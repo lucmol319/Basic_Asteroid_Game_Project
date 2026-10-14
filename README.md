@@ -41,17 +41,21 @@ The weapon on the ship is overpowered as it spammed bullets
 ## Solution 2:
 Implement a shoot cooldown to limit fire rate to one shot every 0.3 seconds
 
-## Ideas:
-Add a scoring system
-Implement multiple lives and respawning
-Add an explosion effect for the asteroids
-Add acceleration to the player movement
-Make the objects wrap around the screen instead of disappearing
-Add a background image
-Create different weapon types
-Make the asteroids lumpy instead of perfectly round
-Make the ship have a triangular hit box instead of a circular one
-Add a shield power-up
-Add a speed power-up
-Add bombs that can be dropped
-Make asteroids bounce off each other
+## Gameplay
+
+- Destroying small, medium, and large asteroids awards 10, 25, and 50 points.
+- The player has three lives and respawns at the center with brief invulnerability.
+- Asteroids burst into particles when hit by a shot.
+- Player thrust accelerates up to a maximum speed and coasts when not thrusting.
+- Use W/S to thrust forward/reverse, A/D to turn, and Space to shoot.
+
+## Ideas
+- Make the objects wrap around the screen instead of disappearing
+- Add a background image
+- Create different weapon types
+- Make the asteroids lumpy instead of perfectly round
+- Make the ship have a triangular hit box instead of a circular one
+- Add a shield power-up
+- Add a speed power-up
+- Add bombs that can be dropped
+- Make asteroids bounce off each other

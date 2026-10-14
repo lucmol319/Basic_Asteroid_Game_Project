@@ -1,9 +1,14 @@
+"""
+Player class for the game.
+This module defines the Player class, which represents the player-controlled spaceship in the game."""
 import pygame
 from circleshape import CircleShape
 from shot import Shot
 from constants import (
     PLAYER_RADIUS, PLAYER_TURN_SPEED,
-    PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS
+    PLAYER_SPEED, PLAYER_ACCELERATION, PLAYER_FRICTION, PLAYER_LIVES,
+    PLAYER_RESPAWN_INVULNERABILITY_SECONDS, PLAYER_SHOOT_SPEED,
+    PLAYER_SHOOT_COOLDOWN_SECONDS
 )
 
 class Player(CircleShape):
@@ -13,6 +18,8 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0 # Create an attribute called rotation, initialized to 0.
         self.shoot_cooldown = 0 # Initialize the shot cooldown timer to 0.
+        self.lives = PLAYER_LIVES
+        self.invulnerable_timer = 0.0
 
     # in the Player class
     def triangle(self) -> list[pygame.Vector2]:
@@ -31,15 +38,24 @@ class Player(CircleShape):
     # Update the player's rotation based on input keys
     def update(self, dt: float) -> None:
         keys = pygame.key.get_pressed()
+        thrust = 0
 
         if keys[pygame.K_a]:
             self.rotate(-dt)
         if keys[pygame.K_s]:
-            self.move(-dt)
+            thrust -= 1
         if keys[pygame.K_d]:
             self.rotate(dt)
         if keys[pygame.K_w]:
-            self.move(dt)
+            thrust += 1
+
+        if thrust:
+            direction = pygame.Vector2(0, 1).rotate(self.rotation)
+            self.velocity += direction * PLAYER_ACCELERATION * thrust * dt
+            if self.velocity.length() > PLAYER_SPEED:
+                self.velocity.scale_to_length(PLAYER_SPEED)
+        else:
+            self.velocity *= PLAYER_FRICTION ** dt
         
         # Handle the spacebar (pygame.K_SPACE) and call the shoot method when it's pressed
         # When the player tries to shoot:
@@ -57,11 +73,21 @@ class Player(CircleShape):
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= dt
 
-    def move(self, dt: float) -> None:
-        unit_vector = pygame.Vector2(0, 1)
-        rotated_vector = unit_vector.rotate(self.rotation)
-        rotated_with_speed_vector = rotated_vector * PLAYER_SPEED * dt
-        self.position += rotated_with_speed_vector
+        self.invulnerable_timer = max(0.0, self.invulnerable_timer - dt)
+
+    def draw(self, surface: pygame.Surface) -> None:
+        if self.invulnerable_timer > 0 and int(self.invulnerable_timer * 8) % 2 == 0:
+            return
+        super().draw(surface)
+
+    def take_hit(self, spawn_position: pygame.Vector2) -> bool:
+        self.lives -= 1
+        if self.lives > 0:
+            self.position = spawn_position.copy()
+            self.velocity.update(0, 0)
+            self.rotation = 0
+            self.invulnerable_timer = PLAYER_RESPAWN_INVULNERABILITY_SECONDS
+        return self.lives == 0
 
     def shoot(self) -> None:
         """

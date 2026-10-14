@@ -1,3 +1,7 @@
+"""
+Asteroid class for the game.
+This module defines the Asteroid class, which represents an asteroid in the game.
+"""
 import pygame
 from circleshape import CircleShape
 from constants import ASTEROID_MIN_RADIUS
@@ -31,6 +35,14 @@ class Asteroid(CircleShape):
     # On each frame, it should add (self.velocity * dt) to its position (get self.velocity from its parent class, CircleShape).
     def update(self, dt: float) -> None:
         self.position += self.velocity * dt
+
+    @property
+    def score_value(self) -> int:
+        if self.radius <= ASTEROID_MIN_RADIUS:
+            return 10
+        if self.radius <= ASTEROID_MIN_RADIUS * 2:
+            return 25
+        return 50
 
     def split(self) -> None:
         """
