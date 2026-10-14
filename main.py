@@ -1,11 +1,13 @@
 import pygame
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+import random
+from constants import POWERUP_DROP_CHANCE, SCREEN_WIDTH, SCREEN_HEIGHT
 from logger import log_state, log_event
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from explosion import Explosion
+from powerup import PowerUp
 
 # pygame.display.set_mode() -> set_mode(size=(0, 0), flags=0, depth=0, display=0, vsync=0) -> Surface
 
@@ -26,8 +28,10 @@ def main():
     # Group for updatable and drawable objects
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
     Player.containers = (updatable, drawable) # Player object is in the groups?
     Explosion.containers = (updatable, drawable)
+    PowerUp.containers = (powerups, updatable, drawable)
 
     # Create a new empty pygame.sprite.Group for the asteroids
     asteroids = pygame.sprite.Group()
@@ -66,10 +70,14 @@ def main():
         for asteroid in list(asteroids):
             if (
                 player.invulnerable_timer <= 0
-                and asteroid.collides_with(player)
+                and player.collides_with(asteroid)
             ):
+                shield_was_active = player.shield_active
                 game_over = player.take_hit(spawn_position)
-                log_event("player_hit", lives=player.lives)
+                if shield_was_active:
+                    log_event("shield_blocked")
+                else:
+                    log_event("player_hit", lives=player.lives)
                 if game_over:
                     print("Game over!")
                     return
@@ -86,15 +94,42 @@ def main():
                         asteroid.position.y,
                         asteroid.radius,
                     )
+                    if random.random() < POWERUP_DROP_CHANCE:
+                        powerup_type = random.choice(
+                            ("shield", "speed", "rapid_fire")
+                        )
+                        PowerUp(
+                            asteroid.position.x,
+                            asteroid.position.y,
+                            powerup_type,
+                        )
                     asteroid.split()
                     shot.kill()
                     break
+
+        for powerup in list(powerups):
+            if player.collides_with(powerup):
+                player.collect_powerup(powerup.powerup_type)
+                log_event("powerup_collected", powerup=powerup.powerup_type)
+                powerup.kill()
 
         screen.fill("Black")
         for sprite in drawable:
             sprite.draw(screen)
 
-        hud = font.render(f"Score: {score}   Lives: {player.lives}", True, "white")
+        active_powerups = []
+        if player.shield_active:
+            active_powerups.append("Shield")
+        if player.speed_powerup_timer > 0:
+            active_powerups.append(f"Speed {player.speed_powerup_timer:.0f}s")
+        if player.rapid_fire_timer > 0:
+            active_powerups.append(f"Rapid Fire {player.rapid_fire_timer:.0f}s")
+        status = "   ".join(active_powerups)
+        hud = font.render(
+            f"Score: {score}   Lives: {player.lives}   {status}",
+            True,
+            "white",
+        )
         screen.blit(hud, (20, 20))
         pygame.display.flip()
 

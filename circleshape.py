@@ -1,5 +1,9 @@
+"""
+This module defines the CircleShape class, which serves as a base class for circular game objects.
+The CircleShape class provides common functionality for circular shapes,
+including position, velocity, radius, drawing, updating, and collision detection."""
 import pygame
-from constants import LINE_WIDTH
+from constants import LINE_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH
 
 # Base class for game objects
 class CircleShape(pygame.sprite.Sprite):
@@ -34,7 +38,14 @@ class CircleShape(pygame.sprite.Sprite):
 
     def update(self, dt: float) -> None:
         self.position += self.velocity * dt
-        # pass
+
+    def is_off_screen(self) -> bool:
+        return (
+            self.position.x + self.radius < 0
+            or self.position.x - self.radius > SCREEN_WIDTH
+            or self.position.y + self.radius < 0
+            or self.position.y - self.radius > SCREEN_HEIGHT
+        )
 
     # Check for collisions. It should take another circle shape as a parameter (aside from self of course) and return True or False.
     def collides_with(self, other: "CircleShape") -> bool:

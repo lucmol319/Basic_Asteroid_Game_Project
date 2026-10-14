@@ -1,3 +1,7 @@
+"""
+This module defines the AsteroidField class, which manages the spawning and updating of asteroids in the game.
+The AsteroidField class is responsible for spawning asteroids at random edges of the
+screen and updating their positions based on their velocities."""
 import random
 from collections.abc import Callable
 import pygame

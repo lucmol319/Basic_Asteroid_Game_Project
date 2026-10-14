@@ -35,6 +35,8 @@ class Asteroid(CircleShape):
     # On each frame, it should add (self.velocity * dt) to its position (get self.velocity from its parent class, CircleShape).
     def update(self, dt: float) -> None:
         self.position += self.velocity * dt
+        if self.is_off_screen():
+            self.kill()
 
     @property
     def score_value(self) -> int:

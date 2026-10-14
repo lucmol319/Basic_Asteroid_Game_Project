@@ -1,5 +1,9 @@
 # Asteroid Game Project
 
+Make a real arcade game while practicing OOP, vectors, collision detection, and game loops. Based on Boot.dev's Asteroid game project using Python and Pygame.
+
+A clone of the classic Asteroids game using Pygame and object-oriented programming concepts. Understand Pygame to create a game loop, handle user input, and manage game state. Use object-oriented programming to create game objects and manage their interactions.
+
 ## Setup
 
 On Windows, install uv from PowerShell if it is not already installed:
@@ -47,15 +51,17 @@ Implement a shoot cooldown to limit fire rate to one shot every 0.3 seconds
 - The player has three lives and respawns at the center with brief invulnerability.
 - Asteroids burst into particles when hit by a shot.
 - Player thrust accelerates up to a maximum speed and coasts when not thrusting.
+- Asteroids, shots, particles, and pickups leave the playfield when they move off-screen, while the ship stays within the screen.
+    - I tried implementing screen wrapping where entities wrap around screen edges but that was a failed experiment.
+- Asteroid hits are checked against the ship's triangular outline.
+- Destroyed asteroids have a 20% chance to drop a shield, speed, or rapid-fire power-up.
+    - Pickups expire after 15 seconds.
+    - Shield blocks one hit; speed and rapid fire boost their respective stats by 50% for 10 seconds.
 - Use W/S to thrust forward/reverse, A/D to turn, and Space to shoot.
 
 ## Ideas
-- Make the objects wrap around the screen instead of disappearing
 - Add a background image
 - Create different weapon types
 - Make the asteroids lumpy instead of perfectly round
-- Make the ship have a triangular hit box instead of a circular one
-- Add a shield power-up
-- Add a speed power-up
 - Add bombs that can be dropped
 - Make asteroids bounce off each other
